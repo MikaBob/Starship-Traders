@@ -1,0 +1,18 @@
+{
+    "root": true,
+    "parserOptions": {
+        "ecmaVersion": 13,
+        "sourceType": "module"
+    },
+    "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended", "plugin:prettier/recommended", "prettier"],
+    "ignorePatterns": ["node_modules/", "dist/", "build/"],
+    "plugins": ["@typescript-eslint/eslint-plugin", "prettier"],
+    "env": {
+        "node": true,
+        "es2022": true
+    },
+    "rules": {
+        "no-console": "off"
+    },
+    "parser": "@typescript-eslint/parser"
+}
