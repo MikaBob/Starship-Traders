@@ -1,6 +1,6 @@
 import env = require('dotenv')
 import axios from 'axios'
-import { Agent, AgentsApi, Configuration, FleetApi, Ship, System, SystemsApi } from 'spacetraders-sdk'
+import { Agent, AgentsApi, Configuration, FleetApi, Market, Ship, Shipyard, System, SystemsApi, Waypoint } from 'spacetraders-sdk'
 
 env.config()
 
@@ -68,4 +68,16 @@ const getSystems = async (): Promise<System[]> => {
     return (await API.system.getSystems()) as unknown as System[]
 }
 
-export { init, getMyAgent, getMyShips, getSystems }
+const getMarket = async (systemSymbol: string, waypointSymbol: string): Promise<Market> => {
+    return (await API.system.getMarket(systemSymbol, waypointSymbol)) as unknown as Market
+}
+
+const getShipyard = async (systemSymbol: string, waypointSymbol: string): Promise<Shipyard> => {
+    return (await API.system.getMarket(systemSymbol, waypointSymbol)) as unknown as Shipyard
+}
+
+const getWaypoint = async (systemSymbol: string, waypointSymbol: string): Promise<Waypoint> => {
+    return (await API.system.getWaypoint(systemSymbol, waypointSymbol)) as unknown as Waypoint
+}
+
+export { init, getMyAgent, getMyShips, getSystems, getMarket, getWaypoint, getShipyard }
