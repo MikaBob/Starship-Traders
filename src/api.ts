@@ -1,28 +1,71 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
-import { GetMyAgentResponseType, GetMyShipResponseType } from './types/apiResponse'
+import env = require('dotenv')
+import axios from 'axios'
+import { Agent, AgentsApi, Configuration, FleetApi, Ship, System, SystemsApi } from 'spacetraders-sdk'
 
-const API_ENDPOINT = 'https://api.spacetraders.io/v2'
+env.config()
 
-const init = (token: string) => {
-    axios.interceptors.request.use(config => {
-        config.headers['Authorization'] = `Bearer ${token}`
-        return config
+const { SPACE_TRADERS_TOKEN, SPACE_TRADERS_API_ENDPOINT, SPACE_TRADERS_USERNAME } = process.env
+
+type APITypes = {
+    agent: AgentsApi
+    fleet: FleetApi
+    system: SystemsApi
+}
+
+let API: APITypes
+
+const init = () => {
+    const instance = axios.create({})
+
+    // retry logic for 429 rate-limit errors
+    instance.interceptors.response.use(
+        async response => {
+            return response.data.data
+        },
+        async error => {
+            const apiError = error.response?.data?.error
+
+            console.error('API error', apiError)
+
+            if (error.response?.status === 429) {
+                const retryAfter = error.response.headers['retry-after']
+
+                await new Promise(resolve => {
+                    setTimeout(resolve, retryAfter * 1000)
+                })
+
+                return instance.request(error.config)
+            }
+
+            throw error
+        },
+    )
+
+    if ((SPACE_TRADERS_TOKEN ?? '') === '') throw new Error('Invalid token provided: ' + SPACE_TRADERS_TOKEN)
+
+    const configuration = new Configuration({
+        basePath: SPACE_TRADERS_API_ENDPOINT ?? '',
+        username: SPACE_TRADERS_USERNAME ?? '',
+        accessToken: SPACE_TRADERS_TOKEN ?? '',
     })
+
+    API = {
+        agent: new AgentsApi(configuration, undefined, instance),
+        fleet: new FleetApi(configuration, undefined, instance),
+        system: new SystemsApi(configuration, undefined, instance),
+    }
 }
 
-const getCall = (url: string, params?: any): unknown => {
-    return axios.get(API_ENDPOINT + url, { params: params } as AxiosRequestConfig).then((resp: AxiosResponse) => {
-        return resp.data.data
-    })
+const getMyAgent = async (): Promise<Agent> => {
+    return (await API.agent.getMyAgent()) as unknown as Agent
 }
 
-const getMyAgent = (): Promise<GetMyAgentResponseType> => {
-    return getCall('/my/agent') as Promise<GetMyAgentResponseType>
+const getMyShips = async (page: number, limit: number): Promise<Ship[]> => {
+    return (await API.fleet.getMyShips(page, limit)) as unknown as Ship[]
 }
 
-const getMyShips = (page: number, limit: number): Promise<GetMyShipResponseType[]> => {
-    return getCall('/my/ships', { limit: limit, page: page }) as Promise<GetMyShipResponseType[]>
+const getSystems = async (): Promise<System[]> => {
+    return (await API.system.getSystems()) as unknown as System[]
 }
 
-export type { GetMyAgentResponseType, GetMyShipResponseType }
-export { init, getMyAgent, getMyShips }
+export { init, getMyAgent, getMyShips, getSystems }

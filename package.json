@@ -6,13 +6,15 @@
         "compile": "tsc",
         "lint": "eslint \"src/**/*.{ts,tsx}\" --quiet --fix",
         "local": "yarn build && node dist/app.js",
-        "make": "yarn install && yarn lint && yarn compile && yarn build"
+        "make": "yarn install && yarn update-api-sdk && yarn lint && yarn compile && yarn build",
+        "update-api-sdk": "openapi-generator-cli generate"
     },
     "dependencies": {
         "axios": "^1.4.0",
         "dotenv": "^16.0.3"
     },
     "devDependencies": {
+        "@openapitools/openapi-generator-cli": "^2.6.0",
         "@types/node": "^18.11.4",
         "@typescript-eslint/eslint-plugin": "^5.46.1",
         "@typescript-eslint/parser": "^5.54.1",
