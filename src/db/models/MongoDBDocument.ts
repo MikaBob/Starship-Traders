@@ -1,5 +1,4 @@
 import { Db, ObjectId, Document, UpdateResult } from 'mongodb'
-import { connectToMongo } from '../dbDriver'
 
 export class MongoDBDocument implements Document {
     _id: ObjectId
@@ -14,8 +13,7 @@ export class MongoDBDocument implements Document {
         throw 'A MongoDBDocument must override method getAssociatedCollectionName().'
     }
 
-    upsert = async (): Promise<boolean> => {
-        const dbClient: Db = await connectToMongo()
+    upsert = async (dbClient: Db): Promise<boolean> => {
         const result: UpdateResult = await dbClient.collection(this.getAssociatedCollectionName()).updateOne({ _id: this._id }, { $set: this }, { upsert: true })
         return (result.modifiedCount || result.upsertedCount) > 0
     }
