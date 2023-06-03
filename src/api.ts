@@ -1,6 +1,22 @@
 import env = require('dotenv')
 import axios from 'axios'
-import { Agent, AgentsApi, Chart, Configuration, Contract, ContractsApi, Cooldown, FleetApi, Market, Ship, ShipNav, Shipyard, System, SystemsApi, Waypoint } from 'spacetraders-sdk'
+import {
+    Agent,
+    AgentsApi,
+    Chart,
+    Configuration,
+    Contract,
+    ContractsApi,
+    Cooldown,
+    FleetApi,
+    Market,
+    Ship,
+    ShipNav,
+    Shipyard,
+    System,
+    SystemsApi,
+    Waypoint,
+} from 'spacetraders-sdk'
 
 env.config()
 
@@ -38,7 +54,8 @@ const init = () => {
         return { data: { data: undefined } }
     })
 
-    if ((SPACE_TRADERS_TOKEN ?? '') === '') throw new Error('Invalid token provided: ' + SPACE_TRADERS_TOKEN)
+    if ((SPACE_TRADERS_TOKEN ?? '') === '')
+        throw new Error('Invalid token provided: ' + SPACE_TRADERS_TOKEN)
 
     const configuration = new Configuration({
         basePath: SPACE_TRADERS_API_ENDPOINT ?? '',
@@ -52,6 +69,7 @@ const init = () => {
         fleet: new FleetApi(configuration, undefined, instance),
         systems: new SystemsApi(configuration, undefined, instance),
     }
+    console.log(`API initialized for account ${configuration.username}`)
 }
 
 const getMyAgent = async (): Promise<Agent> => {
@@ -86,11 +104,15 @@ const createChart = async (shipSymbol: string): Promise<{ chart: Chart; waypoint
     return (await API.fleet.createChart(shipSymbol)).data.data
 }
 
-const acceptContract = async (contractId: string): Promise<{ agent: Agent; contract: Contract }> => {
+const acceptContract = async (
+    contractId: string,
+): Promise<{ agent: Agent; contract: Contract }> => {
     return (await API.contracts.acceptContract(contractId)).data.data
 }
 
-const scanWaypoints = async (shipSymbol: string): Promise<{ cooldown: Cooldown; waypoints: Waypoint[] }> => {
+const scanWaypoints = async (
+    shipSymbol: string,
+): Promise<{ cooldown: Cooldown; waypoints: Waypoint[] }> => {
     return (await API.fleet.createShipWaypointScan(shipSymbol)).data.data
 }
 
@@ -102,4 +124,18 @@ const dockShip = async (shipSymbol: string): Promise<ShipNav> => {
     return (await API.fleet.dockShip(shipSymbol)).data.data.nav
 }
 
-export { init, getMyAgent, orbitShip, dockShip, getMyShips, getSystems, getMarket, getWaypoint, getShipyard, getContracts, scanWaypoints, acceptContract, createChart }
+export {
+    init,
+    getMyAgent,
+    orbitShip,
+    dockShip,
+    getMyShips,
+    getSystems,
+    getMarket,
+    getWaypoint,
+    getShipyard,
+    getContracts,
+    scanWaypoints,
+    acceptContract,
+    createChart,
+}

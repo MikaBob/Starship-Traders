@@ -1,4 +1,13 @@
-import { Chart, Market, Shipyard, Waypoint, WaypointFaction, WaypointOrbital, WaypointTrait, WaypointType } from '../../../packages/spacetraders-sdk/models'
+import {
+    Chart,
+    Market,
+    Shipyard,
+    Waypoint,
+    WaypointFaction,
+    WaypointOrbital,
+    WaypointTrait,
+    WaypointType,
+} from '../../../packages/spacetraders-sdk/models'
 import { MongoDBDocument } from './MongoDBDocument'
 
 const COLLECTION_NAME_FOR_WAYPOINTS = 'waypoints'
