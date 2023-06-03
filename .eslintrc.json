@@ -12,7 +12,8 @@
         "es2022": true
     },
     "rules": {
-        "no-console": "off"
+        "no-console": "off",
+        "@typescript-eslint/ban-ts-comment": "off"
     },
     "parser": "@typescript-eslint/parser"
 }

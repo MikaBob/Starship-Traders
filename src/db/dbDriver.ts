@@ -36,14 +36,14 @@ let mongoClient: Db | null = null
 
 const connectToMongo = async (): Promise<Db> => {
     if (mongoClient !== null) {
-        console.log('Already connected to MongoDB.')
+        //console.log('Already connected to MongoDB.')
         return mongoClient
     }
 
     await mongoDbClient.connect()
 
     mongoClient = mongoDbClient.db(process.env.MONGODB_DB_NAME || '')
-    console.log('Connected to MongoDB.')
+    //console.log('Connected to MongoDB.')
 
     return mongoClient
 }
